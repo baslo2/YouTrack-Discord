@@ -1,0 +1,9 @@
+{
+  "name" : "discord-notification",
+  "title" : "Discord Notification",
+  "version" : "0.0.0",
+  "vendor" : {
+    "name" : "Stefan Heinz",
+    "email" : "stefanh@secondfacesoftware.com"
+  }
+}
