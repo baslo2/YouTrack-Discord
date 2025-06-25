@@ -31,74 +31,65 @@ function createPayloadCommented(comment) {
 }
 
 function createPayloadCreated(issue) {
+  let msg = `:new: New Issue opened by ${issue.updatedBy.fullName}`;
+  if(issue.fields.Assignee) {
+  	const discordId = getDiscordUserId(issue.fields.Assignee);
+  	const ping = _createUserPing(discordId, issue.fields.Assignee.fullName);
+  	msg +=`, assigned to ${ping}`;
+  }
   return {
-    embeds: [
-        {
-            type: "rich",
-            title: `Opened ${issue.id} ${issue.summary}`,
-            description: issue.description,
-            color: "16466332",
-            footer: {
-              text: `Reported by: ${issue.reporter.fullName}`,
-              icon_url: issue.reporter.avatarUrl
-            },
-            url: issue.url
-        }
-    ]
+    embeds: [_createIssueEmbed(issue)],
+    content: msg
   };
 }
 
 function createPayloadResolved(issue) {
   return {
-    embeds: [
-        {
-            type: "rich",
-            title: `Resolved ${issue.id} ${issue.summary}`,
-            description: issue.description,
-            color: "16466332",
-            footer: {
-              text: `Resolved by: ${issue.updatedBy.fullName}`,
-              icon_url: issue.updatedBy.avatarUrl
-            },
-            url: issue.url
-        }
-    ]
+    embeds: [_createIssueEmbed(issue)],
+    content: `:white_check_mark: Resolved by ${issue.updatedBy.fullName} :tada:`
   };
 }
 
 function createPayloadReopened(issue) {
   return {
-    embeds: [
-        {
-            type: "rich",
-            title: `Reopened: ${issue.id} ${issue.summary}`,
-            description: issue.description,
-            color: "16466332",
-            footer: {
-              text: `Reopened by: ${issue.updatedBy.fullName}`,
-              icon_url: issue.updatedBy.avatarUrl
-            },
-            url: issue.url
-        }
-    ]
+    embeds: [_createIssueEmbed(issue)],
+    content: `:repeat: Reopened by ${issue.updatedBy.fullName}`
   };
 }
 
 function createPayloadReassigned(issue, assignee, discordId) {
-  const ping = discordId ? `<@${discordId}>` : `${assignee.fullName}`;
+  const ping = _createUserPing(discordId, assignee.fullName);
   return {
-    embeds: [
-        {
-            type: "rich",
-            title: `Reassigned: ${issue.id} ${issue.summary}`,
-            description: `Assigned to ${ping}`,
-            color: "16466332",
-            url: issue.url
-        }
-    ]
+    embeds: [_createIssueEmbed(issue)],
+    content: `Reassigned to ${ping}`,
   };
 }
 
+function _createIssueEmbed(issue) {
+  return {
+    type: "rich",
+    title: `${issue.id} ${issue.summary}`,
+    description: issue.summary,
+    color: "16466332",
+    url: issue.url,
+    footer: {
+      text: `Assignee: ${issue.fields.Assignee.fullName}`,
+      icon_url: issue.fields.Assignee.avatarUrl
+    },
+  }
+}
+
+function _createUserPing(discordUserId, discordUserName) {
+  return discordUserId ? `<@${discordUserId}>` : `${discordUserName}`;
+}
+
+function getDiscordUserId(user) {
+    return user.attributes["Discord ID"];
+}
+
+function _createSilentPing() {
+  return { allowed_mentions: {parse: []} };
+}
 
 module.exports = {
   sendDiscordPayload,
@@ -106,5 +97,6 @@ module.exports = {
   createPayloadCreated,
   createPayloadResolved,
   createPayloadReopened,
-  createPayloadReassigned
+  createPayloadReassigned,
+  getDiscordUserId
 }
