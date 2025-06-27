@@ -1,6 +1,6 @@
 const http = require("@jetbrains/youtrack-scripting-api/http");
 
-const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1383549282052866058/fxkmL-SiSi1mp9FYkC4D5C3n7k-W5XD1vlOYiUClgoO3IqUR5BnyRvFV5q6wfteSUBpe";
+const DISCORD_WEBHOOK_URL = "";
 
 function sendDiscordPayload(payloadString) {
     const connection = new http.Connection(DISCORD_WEBHOOK_URL, null, 2000);
