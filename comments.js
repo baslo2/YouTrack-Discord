@@ -4,7 +4,7 @@ const shared = require('./_shared');
 exports.rule = entities.Issue.onChange({
   title: "Send notification to Discord when an issue is commented",
   guard: (ctx) => {
-    return ctx.issue.comments;
+    return ctx.issue.comments.added.isNotEmpty();
   },
   action: (ctx) => {
     const comments = ctx.issue.comments;
